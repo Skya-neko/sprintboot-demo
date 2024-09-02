@@ -1,19 +1,11 @@
-package com.example.demo;
+package com.example.demo.model;
 
-public class Product {
-
-    private  String id;
-
-    private  String name;
+public class
+ProductCreateRequest {
+    private String id;
+    private String name;
     private int price;
-    public static Product of(String id, String name, int price) {
-        var p = new Product();
-        p.id = id;
-        p.name = name;
-        p.price = price;
-
-        return p;
-    }
+    private String creatorId;
 
     public String getId() {
         return id;
@@ -37,5 +29,13 @@ public class Product {
 
     public void setPrice(int price) {
         this.price = price;
+    }
+
+    public String getCreatorId() {
+        return creatorId;
+    }
+
+    public void setCreatorId(String creatorId) {
+        this.creatorId = creatorId;
     }
 }

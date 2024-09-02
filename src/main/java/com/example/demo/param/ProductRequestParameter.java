@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.param;
 
 public class ProductRequestParameter {
     private String searchKey;
