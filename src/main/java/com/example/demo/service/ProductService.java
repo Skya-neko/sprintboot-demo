@@ -8,6 +8,7 @@ import com.example.demo.repository.ProductRepository;
 import com.example.demo.repository.UserRepository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ProductService {
@@ -28,29 +29,40 @@ public class ProductService {
     }
 
     public ProductVO getProductVO(String id) {
-        var productPO = getProductPO(id);
-        var productVO = ProductVO.of(productPO);
+        ProductVO productVO = null;
+        System.out.println("=========== Start ProductService.getProductVO ===========");
+        try {
+            ProductPO productPO = getProductPO(id);
+            productVO = ProductVO.of(productPO);
 
-        var user = userRepository.getOneById(productPO.getCreatorId());
-        productVO.setCreatorName(user.getName());
+            UserPO user = userRepository.getOneById(productPO.getCreatorId());
+            productVO.setCreatorName(user.getName());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw e;
 
+        } finally {
+            System.out.println("=========== End ProductService.getProductVO ===========");
+        }
         return productVO;
     }
 
     private ProductPO getProductPO(String id) {
         var po = productRepository.getOneById(id);
         if (po == null) {
-            throw new NotFoundException("Product " + id + "doesn't exist.");
+            throw new NotFoundException("Product " + id + " doesn't exist.");
         }
         return po;
     }
 
     public List<ProductVO> getProductVOs(ProductRequestParameter param) {
+        System.out.println("=========== Start ProductService.getProductVO ===========");
         var productPOs = productRepository.getMany(param);
         var userIds = productPOs.stream().map(ProductPO::getCreatorId).toList();
         var userIdNameMap = userRepository.getManyByIds(userIds)
                 .stream()
                 .collect(Collectors.toMap(UserPO::getId, UserPO::getName));
+
         return productPOs.stream()
                 .map(po ->
                 {

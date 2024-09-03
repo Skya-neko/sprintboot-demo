@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,9 +20,28 @@ public class ProductController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductVO> getProduct(@PathVariable("id") String productId) {
-        var product = productService.getProductVO(productId);
-        return ResponseEntity.ok(product);
+    public ResponseEntity<ProductResVO> getProduct(@PathVariable("id") String productId) {
+        ResponseEntity<ProductResVO> result = null;
+        System.out.println("=========== Start ProductController.getProduct ===========");
+        try {
+            ProductVO product = productService.getProductVO(productId);
+
+            ProductResVO req = new ProductResVO();
+            req.setStatusCode(200);
+            req.setMessage("Success");
+            req.addList(product);
+            result = ResponseEntity.ok(req);
+
+        } catch (Exception e) {
+            ProductResVO req = new ProductResVO();
+            req.setStatusCode(404);
+            req.setMessage(e.getMessage());
+            result = ResponseEntity.ok(req);
+        } finally {
+            System.out.println("=========== End ProductController.getProduct ===========");
+
+        }
+        return result;
     }
 
     @PostMapping("")
