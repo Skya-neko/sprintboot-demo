@@ -8,6 +8,7 @@ import com.example.demo.repository.ProductRepository;
 import com.example.demo.repository.UserRepository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -18,12 +19,24 @@ public class ProductService {
 
 
     public ProductPO createProduct(ProductCreateRequest productReq) {
-        var userPO = userRepository.getOneById(productReq.getCreatorId());
-        if (userPO == null) {
-            throw new UnprocessableEntityException("Product creator " + productReq.getCreatorId() + " doesn't exist.");
+        ProductPO productPO = null;
+        System.out.println("=========== Start ProductService.createProduct ===========");
+        try {
+            var userPO = userRepository.getOneById(productReq.getCreatorId());
+            if (userPO == null) {
+                throw new UnprocessableEntityException("Product creator " + productReq.getCreatorId() + " doesn't exist.");
+            }
+            productPO = ProductPO.of(productReq);
+            productPO = productRepository.insert(productPO);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw e;
+
+        } finally {
+            System.out.println("=========== End ProductService.createProduct ===========");
+
         }
-        var productPO = ProductPO.of(productReq);
-        productPO = productRepository.insert(productPO);
+
 
         return productPO;
     }
@@ -56,20 +69,28 @@ public class ProductService {
     }
 
     public List<ProductVO> getProductVOs(ProductRequestParameter param) {
-        System.out.println("=========== Start ProductService.getProductVO ===========");
-        var productPOs = productRepository.getMany(param);
-        var userIds = productPOs.stream().map(ProductPO::getCreatorId).toList();
-        var userIdNameMap = userRepository.getManyByIds(userIds)
-                .stream()
-                .collect(Collectors.toMap(UserPO::getId, UserPO::getName));
-
-        return productPOs.stream()
-                .map(po ->
-                {
-                    var vo = ProductVO.of(po);
-                    vo.setCreatorName(userIdNameMap.get(vo.getCreatorId()));
-                    return vo;
-                }).toList();
+        List<ProductVO> list = null;
+        System.out.println("=========== Start ProductService.getProductVOs ===========");
+        try {
+            List<ProductPO> productPOs = productRepository.getMany(param);
+            List<String> userIds = productPOs.stream().map(ProductPO::getCreatorId).toList();
+            Map<String, String> userIdNameMap = userRepository.getManyByIds(userIds)
+                    .stream()
+                    .collect(Collectors.toMap(UserPO::getId, UserPO::getName));
+            list = productPOs.stream()
+                    .map(po ->
+                    {
+                        var vo = ProductVO.of(po);
+                        vo.setCreatorName(userIdNameMap.get(vo.getCreatorId()));
+                        return vo;
+                    }).toList();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw e;
+        } finally {
+            System.out.println("=========== End ProductService.getProductVOs ===========");
+        }
+        return list;
 
     }
 

@@ -28,7 +28,12 @@ public class ProductResVO {
         return list;
     }
 
-    public void addList(ProductVO productVO) {
+    public void addProduct
+            (ProductVO productVO) {
         this.list.add(productVO);
+    }
+
+    public void addProducts(List<ProductVO> productVOList) {
+        this.list.addAll(productVOList);
     }
 }
