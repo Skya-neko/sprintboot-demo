@@ -3,12 +3,14 @@ package com.example.demo.repository;
 import com.example.demo.exception.UnprocessableEntityException;
 import com.example.demo.model.ProductPO;
 import com.example.demo.param.ProductRequestParameter;
+import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class ProductRepository {
+@Repository
+public class MapProductRepository implements IProductRepository {
     private static final Map<String, ProductPO> productMap = new HashMap<>();
 
     static {
@@ -21,10 +23,12 @@ public class ProductRepository {
         ).forEach(p -> productMap.put(p.getId(), p));
     }
 
+    @Override
     public ProductPO getOneById(String id) {
         return productMap.get(id);
     }
 
+    @Override
     public ProductPO insert(ProductPO product) {
         if (product.getId() == null) {
             product.setId(generateRandomId());
@@ -45,6 +49,7 @@ public class ProductRepository {
         return uuid.substring(0, uuid.indexOf("-"));
     }
 
+    @Override
     public void update(ProductPO product) {
         if (!productMap.containsKey(product.getId())) {
             throw new UnprocessableEntityException("Product " + product.getId() + "doesn't exist.");
@@ -54,10 +59,12 @@ public class ProductRepository {
         productMap.put(product.getId(), product);
     }
 
+    @Override
     public void deleteById(String id) {
         productMap.remove(id);
     }
 
+    @Override
     public List<ProductPO> getMany(ProductRequestParameter param) {
         var searchKey = param.getSearchKey();
         var sortDir = param.getSortDir();

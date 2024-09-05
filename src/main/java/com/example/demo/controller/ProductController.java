@@ -5,6 +5,7 @@ import com.example.demo.exception.NotFoundException;
 import com.example.demo.model.*;
 import com.example.demo.param.ProductRequestParameter;
 import com.example.demo.service.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -16,8 +17,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("/products")
 public class ProductController {
+    private ProductService productService;
 
-    private static final ProductService productService = new ProductService();
+    @Autowired
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
 
     private static ResponseEntity<ProductResVO> getProductResVOResponseEntity(APIResponseException e, List<ProductVO> productVOList) {
         ResponseEntity<ProductResVO> result;
