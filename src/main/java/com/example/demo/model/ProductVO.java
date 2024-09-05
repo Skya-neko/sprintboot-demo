@@ -11,13 +11,13 @@ public class ProductVO {
 
     public static ProductVO of(ProductPO productPO) {
         var vo = new ProductVO();
-        vo.id = vo.getId();
-        vo.name = vo.getName();
-        vo.price = vo.getPrice();
-        vo.creatorId = vo.getCreatorId();
-//        vo.creatorName = vo.getCreatorName();
-        vo.createdTime = vo.getCreatedTime();
-        vo.updatedTime = vo.getUpdatedTime();
+        vo.id = productPO.getId();
+        vo.name = productPO.getName();
+        vo.price = productPO.getPrice();
+        vo.creatorId = productPO.getCreatorId();
+//        vo.creatorName = productPO.getCreatorName();
+        vo.createdTime = productPO.getCreatedTime();
+        vo.updatedTime = productPO.getUpdatedTime();
         return vo;
     }
 

@@ -31,7 +31,7 @@ public class ProductRepository {
         }
 
         if (productMap.containsKey(product.getId())) {
-            throw new UnprocessableEntityException("Product id" + product.getId() + "is existing.");
+            throw new UnprocessableEntityException("Product id " + product.getId() + " is existing.");
         }
 
         product.setCreatedTime(Instant.now().getEpochSecond());

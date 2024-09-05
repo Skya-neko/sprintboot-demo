@@ -8,6 +8,8 @@ import com.example.demo.repository.ProductRepository;
 import com.example.demo.repository.UserRepository;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ProductService {
@@ -17,47 +19,78 @@ public class ProductService {
 
 
     public ProductPO createProduct(ProductCreateRequest productReq) {
-        var userPO = userRepository.getOneById(productReq.getCreatorId());
-        if (userPO == null) {
-            throw new UnprocessableEntityException("Product creator " + productReq.getCreatorId() + " doesn't exist.");
+        ProductPO productPO = null;
+        System.out.println("=========== Start ProductService.createProduct ===========");
+        try {
+            var userPO = userRepository.getOneById(productReq.getCreatorId());
+            if (userPO == null) {
+                throw new UnprocessableEntityException("Product creator " + productReq.getCreatorId() + " doesn't exist.");
+            }
+            productPO = ProductPO.of(productReq);
+            productPO = productRepository.insert(productPO);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw e;
+
+        } finally {
+            System.out.println("=========== End ProductService.createProduct ===========");
+
         }
-        var productPO = ProductPO.of(productReq);
-        productPO = productRepository.insert(productPO);
+
 
         return productPO;
     }
 
     public ProductVO getProductVO(String id) {
-        var productPO = getProductPO(id);
-        var productVO = ProductVO.of(productPO);
+        ProductVO productVO = null;
+        System.out.println("=========== Start ProductService.getProductVO ===========");
+        try {
+            ProductPO productPO = getProductPO(id);
+            productVO = ProductVO.of(productPO);
 
-        var user = userRepository.getOneById(productPO.getCreatorId());
-        productVO.setCreatorName(user.getName());
+            UserPO user = userRepository.getOneById(productPO.getCreatorId());
+            productVO.setCreatorName(user.getName());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw e;
 
+        } finally {
+            System.out.println("=========== End ProductService.getProductVO ===========");
+        }
         return productVO;
     }
 
     private ProductPO getProductPO(String id) {
         var po = productRepository.getOneById(id);
         if (po == null) {
-            throw new NotFoundException("Product " + id + "doesn't exist.");
+            throw new NotFoundException("Product " + id + " doesn't exist.");
         }
         return po;
     }
 
     public List<ProductVO> getProductVOs(ProductRequestParameter param) {
-        var productPOs = productRepository.getMany(param);
-        var userIds = productPOs.stream().map(ProductPO::getCreatorId).toList();
-        var userIdNameMap = userRepository.getManyByIds(userIds)
-                .stream()
-                .collect(Collectors.toMap(UserPO::getId, UserPO::getName));
-        return productPOs.stream()
-                .map(po ->
-                {
-                    var vo = ProductVO.of(po);
-                    vo.setCreatorName(userIdNameMap.get(vo.getCreatorId()));
-                    return vo;
-                }).toList();
+        List<ProductVO> list = null;
+        System.out.println("=========== Start ProductService.getProductVOs ===========");
+        try {
+            List<ProductPO> productPOs = productRepository.getMany(param);
+            List<String> userIds = productPOs.stream().map(ProductPO::getCreatorId).toList();
+            Map<String, String> userIdNameMap = userRepository.getManyByIds(userIds)
+                    .stream()
+                    .collect(Collectors.toMap(UserPO::getId, UserPO::getName));
+            list = productPOs.stream()
+                    .map(po ->
+                    {
+                        var vo = ProductVO.of(po);
+                        vo.setCreatorName(userIdNameMap.get(vo.getCreatorId()));
+                        return vo;
+                    }).toList();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw e;
+        } finally {
+            System.out.println("=========== End ProductService.getProductVOs ===========");
+        }
+        return list;
 
     }
 
