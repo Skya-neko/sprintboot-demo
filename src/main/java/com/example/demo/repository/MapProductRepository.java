@@ -9,7 +9,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.stream.Stream;
 
-@Repository
+@Repository("mapProductRepository")
 public class MapProductRepository implements IProductRepository {
     private static final Map<String, ProductPO> productMap = new HashMap<>();
 

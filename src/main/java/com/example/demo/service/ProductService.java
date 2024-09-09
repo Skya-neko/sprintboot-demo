@@ -7,6 +7,7 @@ import com.example.demo.param.ProductRequestParameter;
 import com.example.demo.repository.IProductRepository;
 import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class ProductService {
     private UserRepository userRepository;
 
     @Autowired
-    public ProductService(IProductRepository productRepository, UserRepository userRepository) {
+    public ProductService(@Qualifier("mapProductRepository") IProductRepository productRepository, UserRepository userRepository) {
         this.productRepository = productRepository;
         this.userRepository = userRepository;
     }
