@@ -6,9 +6,11 @@ import com.violet.demo.model.Student;
 import com.violet.demo.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.data.domain.Range;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -24,7 +26,7 @@ public class MyController {
 
     @PostMapping("/students")
     public ResponseEntity<Void> createStudent(@RequestBody Student student) {
-        System.out.println("================== Start MyController.getStudent ==================");
+        System.out.println("================== Start MyController.createStudent ==================");
         try {
             student.setId(null);
             studentRepository.insert(student);
@@ -37,7 +39,7 @@ public class MyController {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
-            System.out.println("================== End MyController.getStudent ==================");
+            System.out.println("================== End MyController.createStudent ==================");
         }
         return ResponseEntity.notFound().build();
 
@@ -97,10 +99,131 @@ public class MyController {
         return ResponseEntity.notFound().build();
     }
 
+    @GetMapping("students/name/{name}")
+    public ResponseEntity<Student> getStudentByName(@PathVariable String name) {
+        try {
+            System.out.println("================== Start MyController.getStudentByName ==================");
+
+            Student s = studentRepository.findByName(name);
+            return ResponseEntity.ok(s);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            System.out.println("================== End MyController.getStudentByName ==================");
+
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("students/ContactEmail/{email}")
+    public ResponseEntity<Student> getByContactEmail(@PathVariable String email) {
+        try {
+            System.out.println("================== Start MyController.getByContactEmail ==================");
+
+            Student s = studentRepository.findByContactEmail(email);
+            return ResponseEntity.ok(s);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            System.out.println("================== End MyController.getByContactEmail ==================");
+
+        }
+        return ResponseEntity.notFound().build();
+    }
+
     @GetMapping("students/ids")
     public ResponseEntity<List<Student>> getStudents(@RequestParam("idList") List<String> idList) {
         List<Student> students = studentRepository.findAllById(idList);
         return ResponseEntity.ok(students);
+
+    }
+
+    @GetMapping("students/CertificatesType/{type}")
+    public ResponseEntity<List<Student>> getStudentsByCertificatesType(@PathVariable String type) {
+        try {
+            System.out.println("================== Start MyController.getStudentsByCertificatesType ==================");
+
+            List<Student> students = studentRepository.findByCertificatesType(type);
+            return ResponseEntity.ok(students);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            System.out.println("================== End MyController.getStudentsByCertificatesType ==================");
+
+        }
+        return ResponseEntity.notFound().build();
+
+    }
+
+
+    @GetMapping("students/findByGrade")
+    public ResponseEntity<List<Student>> getByGrade(
+            @Param("from") int from
+            , @Param("to") int to
+    ) {
+        try {
+            System.out.println("================== Start MyController.getByGrade ==================");
+            Range<Integer> range = Range.of(
+                    Range.Bound.inclusive(from),
+                    Range.Bound.inclusive(to)
+            );
+            List<Student> students = studentRepository.findByGradeBetween(range);
+            return ResponseEntity.ok(students);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            System.out.println("================== End MyController.getByGrade ==================");
+
+        }
+        return ResponseEntity.notFound().build();
+
+    }
+
+    @GetMapping("students/GradeAndBirthday")
+    public ResponseEntity<List<Student>> getStudentsByGradeAndBirthday(
+            @Param("gradeFrom") int gradeFrom
+            , @Param("gradeTo") int gradeTo
+
+            , @RequestParam("birthdayFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dFrom
+            , @RequestParam("birthdayTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dTo
+    ) {
+        try {
+            System.out.println("================== Start MyController.getStudentsByGradeAndBirthday ==================");
+            Range<Integer> gradeRange = Range.of(
+                    Range.Bound.inclusive(gradeFrom),
+                    Range.Bound.inclusive(gradeTo)
+            );
+            System.out.println(gradeTo);
+            System.out.println(dFrom);
+            System.out.println(dTo);
+            List<Student> students = studentRepository.findByGradeBetweenAndBirthdayBetween(gradeRange, dFrom, dTo);
+            return ResponseEntity.ok(students);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            System.out.println("================== End MyController.getStudentsByGradeAndBirthday ==================");
+
+        }
+        return ResponseEntity.notFound().build();
+
+    }
+
+    @GetMapping("students/getStudentsByContact")
+    public ResponseEntity<List<Student>> getStudentsByContact(
+            @RequestParam(value = "email", required = false) String email
+            , @RequestParam("phone") String phone
+    ) {
+        try {
+            System.out.println("================== Start MyController.getStudentsByContact ==================");
+            List<Student> students = studentRepository.findByContact(email, phone);
+            return ResponseEntity.ok(students);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            System.out.println("================== End MyController.getStudentsByContact ==================");
+
+        }
+        return ResponseEntity.notFound().build();
 
     }
 
