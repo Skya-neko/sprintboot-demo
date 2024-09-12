@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +29,9 @@ public class MyController {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     @PostMapping("/students")
     public ResponseEntity<Void> createStudent(@RequestBody Student student) {
@@ -294,6 +300,58 @@ public class MyController {
         return ResponseEntity.notFound().build();
 
 
+    }
+
+    @GetMapping("students/MongoTemplateGrade")
+    public ResponseEntity<List<Student>> getStudentsMongoTemplateGrade(
+            @RequestParam("grade") int grade
+    ) {
+
+
+        try {
+
+            System.out.println("================== Start MyController.getStudentsMongoTemplateGrade ==================");
+            Criteria criteria = Criteria.where("grade").is(grade);
+            Pageable pageable = Pageable.unpaged();
+            Query query = new Query(criteria).with(pageable);
+            List<Student> students = mongoTemplate.find(query, Student.class);
+            return ResponseEntity.ok(students);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            System.out.println("================== End MyController.getStudentsMongoTemplateGrade ==================");
+
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("students/MongoTemplateGrade1TOEIC900")
+    public ResponseEntity<List<Student>> getStudentsMongoTemplateGrade1TOEIC900(
+    ) {
+
+
+        try {
+
+            System.out.println("================== Start MyController.getStudentsMongoTemplateGrade1TOEIC900 ==================");
+            Criteria certCriteria = Criteria.where("certificates").elemMatch(
+                    new Criteria().andOperator(
+                            Criteria.where("type").is("TOEIC"),
+                            Criteria.where("score").gte(500)
+                    )
+            );
+            Criteria gradeCriteria = Criteria.where("grade").is(3);
+            Criteria allCriteria = new Criteria().andOperator(certCriteria, gradeCriteria);
+            Pageable pageable = Pageable.unpaged();
+            Query query = new Query(allCriteria).with(pageable);
+            List<Student> students = mongoTemplate.find(query, Student.class);
+            return ResponseEntity.ok(students);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            System.out.println("================== End MyController.getStudentsMongoTemplateGrade1TOEIC900 ==================");
+
+        }
+        return ResponseEntity.notFound().build();
     }
 
 
