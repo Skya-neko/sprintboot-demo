@@ -5,6 +5,9 @@ import com.violet.demo.model.Contact;
 import com.violet.demo.model.Student;
 import com.violet.demo.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -138,6 +141,7 @@ public class MyController {
 
     }
 
+
     @GetMapping("students/CertificatesType/{type}")
     public ResponseEntity<List<Student>> getStudentsByCertificatesType(@PathVariable String type) {
         try {
@@ -227,6 +231,72 @@ public class MyController {
 
     }
 
+    @GetMapping("students/sort")
+    public ResponseEntity<List<Student>> getStudentsSort() {
+        try {
+            System.out.println("================== Start MyController.getStudentsSort ==================");
+
+            List<Student> students = studentRepository.findAllByOrderByGradeDescBirthdayAsc();
+            return ResponseEntity.ok(students);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            System.out.println("================== End MyController.getStudentsSort ==================");
+
+        }
+        return ResponseEntity.notFound().build();
+
+    }
+
+    @GetMapping("students/sortBy")
+    public ResponseEntity<List<Student>> getStudentsSortBy(
+            @RequestParam(value = "sortField", required = false) String sortField
+            , @RequestParam(value = "sortDirection", required = false) String sortDirection) {
+        try {
+
+            System.out.println("================== Start MyController.getStudentsSortBy ==================");
+            Sort sort = createSort(sortField, sortDirection);
+            List<Student> students = studentRepository.findSort(sort);
+
+            return ResponseEntity.ok(students);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            System.out.println("================== End MyController.getStudentsSortBy ==================");
+
+        }
+        return ResponseEntity.notFound().build();
+
+
+    }
+
+    @GetMapping("students/sortByAndPage")
+    public ResponseEntity<List<Student>> getStudentsSortByAndPage(
+            @RequestParam(value = "sortField", required = false) String sortField
+            , @RequestParam(value = "sortDirection", required = false) String sortDirection
+            , @RequestParam(value = "page", required = false) Integer page
+            , @RequestParam(value = "size", required = false) Integer size
+    ) {
+        try {
+
+            System.out.println("================== Start MyController.getStudentsSortByAndPage ==================");
+            Sort sort = createSort(sortField, sortDirection);
+            Pageable pageable = createPage(page, size, sort);
+            List<Student> students = studentRepository.findPage(pageable);
+
+            return ResponseEntity.ok(students);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            System.out.println("================== End MyController.getStudentsSortByAndPage ==================");
+
+        }
+        return ResponseEntity.notFound().build();
+
+
+    }
+
+
     @PutMapping("students/{id}")
     public ResponseEntity<Void> updateStudent(@PathVariable String id, @RequestBody Student request) {
         Optional<Student> studentOp = studentRepository.findById(id);
@@ -250,5 +320,29 @@ public class MyController {
     public ResponseEntity<Void> deleteStudent(@PathVariable String id) {
         studentRepository.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    private Pageable createPage(Integer page, Integer size, Sort sort) {
+        if (page == null || size == null) {
+            return Pageable.unpaged(sort);
+        }
+        return PageRequest.of(page, size, sort);
+    }
+
+    private Sort createSort(String field, String direction) {
+        if (field == null || direction == null) {
+            return Sort.unsorted();
+        }
+
+        Sort.Order order;
+        if ("asc".equalsIgnoreCase(direction)) {
+            order = Sort.Order.asc(field);
+        } else if ("desc".equalsIgnoreCase(direction)) {
+            order = Sort.Order.desc(field);
+        } else {
+            return Sort.unsorted();
+        }
+
+        return Sort.by(List.of(order));
     }
 }

@@ -1,7 +1,9 @@
 package com.violet.demo.repository;
 
 import com.violet.demo.model.Student;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Range;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -43,6 +45,14 @@ public interface StudentRepository extends MongoRepository<Student, String> {
                 }
             """)
     List<Student> findByContact(String email, String phone);
+
+    List<Student> findAllByOrderByGradeDescBirthdayAsc();
+
+    @Query("{}")
+    List<Student> findSort(Sort sort);
+
+    @Query("{}")
+    List<Student> findPage(Pageable pageable);
 
 
 }
