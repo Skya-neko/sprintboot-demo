@@ -1,4 +1,4 @@
-package com.violet.demo.model;
+package com.violet.demo.entity.base;
 
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedBy;

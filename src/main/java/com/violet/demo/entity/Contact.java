@@ -1,5 +1,6 @@
-package com.violet.demo.model;
+package com.violet.demo.entity;
 
+import com.violet.demo.entity.base.BaseContact;
 import jakarta.persistence.Embeddable;
 
 @Embeddable

@@ -1,4 +1,4 @@
-package com.violet.demo.model;
+package com.violet.demo;
 
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Component;
