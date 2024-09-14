@@ -57,4 +57,12 @@ public class Student extends BaseEntity {
     public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
+
+    public Contact getContact() {
+        return contact;
+    }
+
+    public void setContact(Contact contact) {
+        this.contact = contact;
+    }
 }
