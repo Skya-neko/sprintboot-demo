@@ -8,12 +8,14 @@ import com.violet.demo.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -70,6 +72,23 @@ public class MyController {
         });
 
         return studentContactMap;
+    }
+
+    @GetMapping("students/{id}")
+    public ResponseEntity<Optional<Student>> getStudent(@PathVariable("id") Long id) {
+        System.out.println("============= Start MyController.getStudent =============");
+        try {
+            Optional<Student> student = studentRepository.findById(id);
+
+
+            return ResponseEntity.ok(student);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            System.out.println("============= End MyController.getStudent =============");
+
+        }
+        return ResponseEntity.notFound().build();
     }
 
 
