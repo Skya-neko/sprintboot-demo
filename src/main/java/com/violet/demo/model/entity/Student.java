@@ -12,8 +12,9 @@ public class Student {
     private Long id;
     private String name;
 
-    @Column(name = "contact_id")
-    private Long contactId;
+    @OneToOne
+    @JoinColumn(name = "contact_id", referencedColumnName = "id", nullable = false, unique = true)
+    private Contact contact;
 
     public Long getId() {
         return id;
@@ -29,5 +30,13 @@ public class Student {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Contact getContact() {
+        return contact;
+    }
+
+    public void setContact(Contact contact) {
+        this.contact = contact;
     }
 }
