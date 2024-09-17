@@ -29,9 +29,11 @@ public class MyController {
                     .stream()
                     .map(s -> {
                         Contact contact = s.getContact();
+                        System.out.println("s.getContact();");
                         StudentResponse res = new StudentResponse();
                         res.setId(s.getId());
                         res.setName(s.getName());
+                        System.out.println("contact.getEmail()");
                         res.setEmail(contact.getEmail());
                         res.setPhone(contact.getPhone());
                         return res;

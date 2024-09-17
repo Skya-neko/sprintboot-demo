@@ -12,7 +12,7 @@ public class Student {
     private Long id;
     private String name;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "contact_id", referencedColumnName = "id", nullable = false, unique = true)
     private Contact contact;
 
