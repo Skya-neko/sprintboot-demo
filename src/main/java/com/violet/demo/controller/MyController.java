@@ -18,15 +18,27 @@ public class MyController {
     private StudentRepository studentRepository;
 
     @GetMapping("/students")
-    public ResponseEntity<List<Student>> getStudents(
+    public ResponseEntity<List<StudentResponse>> getStudents(
             @RequestParam(required = false, defaultValue = "") String name
     ) {
 
         System.out.println("============= Start MyController.getStudents =============");
         try {
             List<Student> students = studentRepository.findByNameLikeIgnoreCase("%" + name + "%");
+            List<StudentResponse> responses = students
+                    .stream()
+                    .map(s -> {
+                        Contact contact = s.getContact();
+                        StudentResponse res = new StudentResponse();
+                        res.setId(s.getId());
+                        res.setName(s.getName());
+                        res.setEmail(contact.getEmail());
+                        res.setPhone(contact.getPhone());
+                        return res;
+                    })
+                    .toList();
 
-            return ResponseEntity.ok(students);
+            return ResponseEntity.ok(responses);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
