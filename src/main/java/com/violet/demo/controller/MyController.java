@@ -7,10 +7,7 @@ import com.violet.demo.repository.ContactRepository;
 import com.violet.demo.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -82,6 +79,22 @@ public class MyController {
 
 
             return ResponseEntity.ok(student);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            System.out.println("============= End MyController.getStudent =============");
+
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("students/delete/{id}")
+    public ResponseEntity<String> deleteStudent(@PathVariable("id") Long id) {
+        System.out.println("============= Start MyController.getStudent =============");
+        try {
+            studentRepository.deleteById(id);
+
+            return ResponseEntity.ok("student id: " + id + ", has been removed.");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         } finally {
