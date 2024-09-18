@@ -2,6 +2,8 @@ package com.violet.demo.model.entity;
 
 import jakarta.persistence.*;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "department")
 public class Department {
@@ -9,6 +11,9 @@ public class Department {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "department")
+    private Set<Student> Students;
 
     public Long getId() {
         return id;
@@ -24,5 +29,13 @@ public class Department {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Set<Student> getStudents() {
+        return Students;
+    }
+
+    public void setStudents(Set<Student> students) {
+        Students = students;
     }
 }

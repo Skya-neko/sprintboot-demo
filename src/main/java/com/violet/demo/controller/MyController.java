@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -94,6 +91,29 @@ public class MyController {
 
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/departments/{id}/students")
+    public ResponseEntity<List<StudentResponse>> getStudentsByDepartment(@PathVariable Long id) {
+        Optional<Department> departmentOp = departmentRepository.findById(id);
+        if (departmentOp.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Department department = departmentOp.get();
+        Set<Student> students = department.getStudents();
+        List<StudentResponse> responses = students
+                .stream()
+                .map(s -> {
+                    StudentResponse res = new StudentResponse();
+                    res.setId(s.getId());
+                    res.setName(s.getName());
+
+                    return res;
+                })
+                .toList();
+
+        return ResponseEntity.ok(responses);
     }
 
     @PostMapping("students")
