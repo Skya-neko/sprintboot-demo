@@ -3,6 +3,8 @@ package com.violet.demo.model.entity;
 import jakarta.persistence.*;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "student")
 public class Student {
@@ -19,6 +21,15 @@ public class Student {
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "dept_id", referencedColumnName = "id", nullable = false)
     private Department department;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
+    @JoinTable(
+            name = "student_course",
+            joinColumns = @JoinColumn(name = "student_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"student_id", "course_id"})
+    )
+    private Set<Course> courses;
 
     public Long getId() {
         return id;
@@ -50,5 +61,13 @@ public class Student {
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    public Set<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(Set<Course> courses) {
+        this.courses = courses;
     }
 }

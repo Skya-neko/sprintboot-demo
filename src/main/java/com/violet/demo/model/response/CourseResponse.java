@@ -1,6 +1,6 @@
 package com.violet.demo.model.response;
 
-public class StudentResponse {
+public class CourseResponse {
     private Long id;
     private String name;
 
@@ -19,6 +19,4 @@ public class StudentResponse {
     public void setName(String name) {
         this.name = name;
     }
-
-
 }

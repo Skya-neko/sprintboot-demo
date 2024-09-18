@@ -1,11 +1,15 @@
 package com.violet.demo.controller;
 
 import com.violet.demo.model.entity.Contact;
+import com.violet.demo.model.entity.Course;
 import com.violet.demo.model.entity.Department;
 import com.violet.demo.model.entity.Student;
 import com.violet.demo.model.request.StudentRequest;
+import com.violet.demo.model.request.TakeCourseRequest;
+import com.violet.demo.model.response.CourseResponse;
 import com.violet.demo.model.response.StudentResponse;
 import com.violet.demo.repository.ContactRepository;
+import com.violet.demo.repository.CourseRepository;
 import com.violet.demo.repository.DepartmentRepository;
 import com.violet.demo.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +31,9 @@ public class MyController {
     @Autowired
     private DepartmentRepository departmentRepository;
 
+    @Autowired
+    private CourseRepository courseRepository;
+
     @GetMapping("/students")
     public ResponseEntity<List<StudentResponse>> getStudents(
             @RequestParam(required = false, defaultValue = "") String name
@@ -43,9 +50,6 @@ public class MyController {
                         StudentResponse res = new StudentResponse();
                         res.setId(s.getId());
                         res.setName(s.getName());
-                        res.setDepartmentName(department.getName());
-                        res.setEmail(contact.getEmail());
-                        res.setPhone(contact.getPhone());
 
                         return res;
                     })
@@ -116,6 +120,40 @@ public class MyController {
         return ResponseEntity.ok(responses);
     }
 
+    @GetMapping("/students/{studentId}/courses")
+    public ResponseEntity<List<CourseResponse>> getStudentTakingCourses(
+            @PathVariable Long studentId
+    ) {
+        System.out.println("============= Start MyController.getStudentTakingCourses =============");
+        try {
+            Optional<Student> studentOp = studentRepository.findById(studentId);
+            if (studentOp.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Student student = studentOp.get();
+            Set<Course> courses = student.getCourses();
+
+            List<CourseResponse> courseResponseList = courses
+                    .stream()
+                    .map(course -> {
+                        CourseResponse res = new CourseResponse();
+                        res.setId(course.getId());
+                        res.setName(course.getName());
+                        return res;
+                    })
+                    .toList();
+
+            return ResponseEntity.ok(courseResponseList);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            System.out.println("============= End MyController.getStudentTakingCourses =============");
+
+        }
+        return ResponseEntity.notFound().build();
+    }
+
     @PostMapping("students")
     public ResponseEntity<Student> createStudent(@RequestBody StudentRequest request) {
 
@@ -146,6 +184,34 @@ public class MyController {
 
     }
 
+    @PostMapping("/students/{id}/courses")
+    public ResponseEntity<Void> takeCourse(
+            @PathVariable Long id,
+            @RequestBody TakeCourseRequest request
+    ) {
+        System.out.println("============= Start MyController.takeCourse =============");
+        try {
+            Optional<Student> studentOp = studentRepository.findById(id);
+            if (studentOp.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            List<Course> targetCourses = courseRepository.findAllById((request.getCourseIds()));
+
+            Student student = studentOp.get();
+            Set<Course> existingCourses = student.getCourses();
+            existingCourses.addAll(targetCourses);
+            studentRepository.save(student);
+
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            System.out.println("============= End MyController.takeCourse =============");
+
+        }
+        return ResponseEntity.notFound().build();
+    }
+
 
     @DeleteMapping("students/delete/{id}")
     public ResponseEntity<String> deleteStudent(@PathVariable("id") Long id) {
@@ -158,6 +224,32 @@ public class MyController {
             System.out.println(e.getMessage());
         } finally {
             System.out.println("============= End MyController.getStudent =============");
+
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/students/{studentId}/courses/{courseId}")
+    public ResponseEntity<Void> deleteStudentTakingCourses(
+            @PathVariable Long studentId,
+            @PathVariable Long courseId
+    ) {
+        System.out.println("============= Start MyController.deleteStudentTakingCourses =============");
+        try {
+            Optional<Student> studentOp = studentRepository.findById(studentId);
+            if (studentOp.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Student student = studentOp.get();
+            student.getCourses().removeIf(course -> course.getId().equals(courseId));
+            studentRepository.save(student);
+
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            System.out.println("============= End MyController.deleteStudentTakingCourses =============");
 
         }
         return ResponseEntity.notFound().build();

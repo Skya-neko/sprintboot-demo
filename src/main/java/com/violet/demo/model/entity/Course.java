@@ -1,6 +1,12 @@
-package com.violet.demo.model.response;
+package com.violet.demo.model.entity;
 
-public class StudentResponse {
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "course")
+public class Course {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
 
@@ -19,6 +25,4 @@ public class StudentResponse {
     public void setName(String name) {
         this.name = name;
     }
-
-
 }
