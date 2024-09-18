@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
+    @EntityGraph(attributePaths = {"contact", "department"})
     List<Student> findByNameLikeIgnoreCase(String name);
 
     @EntityGraph(attributePaths = {"contact", "department"})

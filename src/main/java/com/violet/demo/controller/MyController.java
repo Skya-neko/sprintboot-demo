@@ -37,15 +37,16 @@ public class MyController {
         System.out.println("============= Start MyController.getStudents =============");
         try {
             List<Student> students = studentRepository.findByNameLikeIgnoreCase("%" + name + "%");
-            Map<Student, Contact> studentContactMap = createStudentContactMap(students);
 
             List<StudentResponse> responses = students
                     .stream()
                     .map(s -> {
-                        Contact contact = studentContactMap.get(s);
+                        Contact contact = s.getContact();
+                        Department department = s.getDepartment();
                         StudentResponse res = new StudentResponse();
                         res.setId(s.getId());
                         res.setName(s.getName());
+                        res.setDepartmentName(department.getName());
                         res.setEmail(contact.getEmail());
                         res.setPhone(contact.getPhone());
 
@@ -104,12 +105,14 @@ public class MyController {
             if (departmentOp.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
-
+            Contact contact = request.getContact();
+            contact.setId(null);
+            contact = contactRepository.save(contact);
             Student student = new Student();
             student.setName(request.getName());
-            student.setContact(request.getContact());
+            student.setContact(contact);
             student.setDepartment(departmentOp.get());
-            studentRepository.save(student);
+            student = studentRepository.save(student);
 
             return ResponseEntity.ok(student);
         } catch (Exception e) {
