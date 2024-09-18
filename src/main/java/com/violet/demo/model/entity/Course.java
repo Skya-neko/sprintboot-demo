@@ -2,6 +2,8 @@ package com.violet.demo.model.entity;
 
 import jakarta.persistence.*;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "course")
 public class Course {
@@ -9,6 +11,9 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+
+    @ManyToMany(mappedBy = "courses")
+    private Set<Student> students;
 
     public Long getId() {
         return id;
@@ -24,5 +29,13 @@ public class Course {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Set<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(Set<Student> students) {
+        this.students = students;
     }
 }

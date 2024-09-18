@@ -154,6 +154,40 @@ public class MyController {
         return ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/courses/{courseId}/students")
+    public ResponseEntity<List<StudentResponse>> getCoursesTakingStudents(
+            @PathVariable Long courseId
+    ) {
+        System.out.println("============= Start MyController.getCoursesTakingStudents =============");
+        try {
+            Optional<Course> courseOp = courseRepository.findById(courseId);
+            if (courseOp.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Course course = courseOp.get();
+            Set<Student> students = course.getStudents();
+
+            List<StudentResponse> studentResponses = students
+                    .stream()
+                    .map(student -> {
+                        StudentResponse res = new StudentResponse();
+                        res.setId(student.getId());
+                        res.setName(student.getName());
+                        return res;
+                    })
+                    .toList();
+
+            return ResponseEntity.ok(studentResponses);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            System.out.println("============= End MyController.getCoursesTakingStudents =============");
+
+        }
+        return ResponseEntity.notFound().build();
+    }
+
     @PostMapping("students")
     public ResponseEntity<Student> createStudent(@RequestBody StudentRequest request) {
 
