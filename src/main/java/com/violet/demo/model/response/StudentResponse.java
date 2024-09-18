@@ -3,6 +3,7 @@ package com.violet.demo.model.response;
 public class StudentResponse {
     private Long id;
     private String name;
+    private String departmentName;
     private String email;
     private String phone;
 
@@ -20,6 +21,14 @@ public class StudentResponse {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
     }
 
     public String getEmail() {

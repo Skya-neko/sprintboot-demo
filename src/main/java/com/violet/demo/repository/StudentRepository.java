@@ -11,6 +11,6 @@ import java.util.Optional;
 public interface StudentRepository extends JpaRepository<Student, Long> {
     List<Student> findByNameLikeIgnoreCase(String name);
 
-    @EntityGraph(attributePaths = {"contact"})
+    @EntityGraph(attributePaths = {"contact", "department"})
     Optional<Student> findById(Long id);
 }

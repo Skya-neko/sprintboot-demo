@@ -1,9 +1,12 @@
 package com.violet.demo.controller;
 
 import com.violet.demo.model.entity.Contact;
+import com.violet.demo.model.entity.Department;
 import com.violet.demo.model.entity.Student;
+import com.violet.demo.model.request.StudentRequest;
 import com.violet.demo.model.response.StudentResponse;
 import com.violet.demo.repository.ContactRepository;
+import com.violet.demo.repository.DepartmentRepository;
 import com.violet.demo.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +26,9 @@ public class MyController {
 
     @Autowired
     private ContactRepository contactRepository;
+
+    @Autowired
+    private DepartmentRepository departmentRepository;
 
     @GetMapping("/students")
     public ResponseEntity<List<StudentResponse>> getStudents(
@@ -75,6 +81,7 @@ public class MyController {
     public ResponseEntity<Optional<Student>> getStudent(@PathVariable("id") Long id) {
         System.out.println("============= Start MyController.getStudent =============");
         try {
+            System.out.println(id);
             Optional<Student> student = studentRepository.findById(id);
 
 
@@ -87,6 +94,35 @@ public class MyController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    @PostMapping("students")
+    public ResponseEntity<Student> createStudent(@RequestBody StudentRequest request) {
+
+        System.out.println("============= Start MyController.createStudent =============");
+        try {
+            Optional<Department> departmentOp = departmentRepository.findById(request.getDepartmentId());
+            if (departmentOp.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Student student = new Student();
+            student.setName(request.getName());
+            student.setContact(request.getContact());
+            student.setDepartment(departmentOp.get());
+            studentRepository.save(student);
+
+            return ResponseEntity.ok(student);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            System.out.println("============= End MyController.createStudent =============");
+
+        }
+        return ResponseEntity.notFound().build();
+
+
+    }
+
 
     @DeleteMapping("students/delete/{id}")
     public ResponseEntity<String> deleteStudent(@PathVariable("id") Long id) {

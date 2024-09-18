@@ -12,9 +12,13 @@ public class Student {
     private Long id;
     private String name;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JoinColumn(name = "contact_id", referencedColumnName = "id", nullable = false, unique = true)
     private Contact contact;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
+    @JoinColumn(name = "dept_id", referencedColumnName = "id", nullable = false)
+    private Department department;
 
     public Long getId() {
         return id;
@@ -38,5 +42,13 @@ public class Student {
 
     public void setContact(Contact contact) {
         this.contact = contact;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 }
