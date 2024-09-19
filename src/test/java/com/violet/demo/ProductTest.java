@@ -1,6 +1,9 @@
 package com.violet.demo;
 
+import com.violet.demo.repository.ProductRepository;
 import org.json.JSONObject;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +24,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class ProductTest {
+    private HttpHeaders httpHeaders;
+    @Autowired
+    private ProductRepository productRepository;
     @Autowired
     private MockMvc mockMvc;
 
+    @Before
+    public void init() {
+        httpHeaders = new HttpHeaders();
+        httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+    }
+
+    @After
+    public void clear() {
+        productRepository.deleteAll();
+    }
+
     @Test
     public void testCreateProduct() throws Exception {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 
         JSONObject request = new JSONObject()
                 .put("name", "Harry Potter")

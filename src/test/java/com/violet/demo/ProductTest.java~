@@ -1,6 +1,9 @@
 package com.violet.demo;
 
+import com.violet.demo.repository.ProductRepository;
 import org.json.JSONObject;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +18,28 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 public class ProductTest {
+    private HttpHeaders httpHeaders;
+    @Autowired
+    private ProductRepository productRepository;
     @Autowired
     private MockMvc mockMvc;
+
+    @Before
+    public void init() {
+        httpHeaders = new HttpHeaders();
+        httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+    }
+
+    @After
+    public void clear() {
+        productRepository.deleteAll();
+    }
 
     @Test
     public void testCreateProduct() throws Exception {
