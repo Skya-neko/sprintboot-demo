@@ -2,6 +2,7 @@ package com.violet.demo.controller;
 
 import com.violet.demo.entity.Product;
 import com.violet.demo.parameter.ProductQueryParameter;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import com.violet.demo.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,24 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private Environment environment;
+
+    @GetMapping("/checkUserName")
+    public ResponseEntity<String> checkUserName() {
+        System.out.println("============= Start ProductController.getProducts =============");
+        try {
+            String userName = environment.getProperty("USERNAME");
+            System.out.println(userName);
+            return ResponseEntity.ok(userName);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            System.out.println("============= End ProductController.getProducts =============");
+        }
+        return ResponseEntity.notFound().build();
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProduct(@PathVariable("id") String id) {
         Product product = productService.getProduct(id);
@@ -33,7 +52,7 @@ public class ProductController {
             return ResponseEntity.ok(products);
         } catch (Exception e) {
             System.out.println(e.getMessage());
-        }finally {
+        } finally {
             System.out.println("============= End ProductController.getProducts =============");
         }
         return ResponseEntity.notFound().build();
