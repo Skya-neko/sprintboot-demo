@@ -61,17 +61,25 @@ public class ProductController {
         return ResponseEntity.notFound().build();
     }
 
-    @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody @Valid Product request) {
-        Product product = productService.createProduct(request);
+    @PostMapping("/post")
+    public ResponseEntity<Product> createProduct(@Valid @RequestBody Product request) {
+        System.out.println("============= Start ProductController.createProduct =============");
+        try {
+            Product product = productService.createProduct(request);
 
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(product.getId())
-                .toUri();
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(product.getId())
+                    .toUri();
 
-        return ResponseEntity.created(location).body(product);
+            return ResponseEntity.created(location).body(product);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            System.out.println("============= End ProductController.createProduct =============");
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @PutMapping("/{id}")
