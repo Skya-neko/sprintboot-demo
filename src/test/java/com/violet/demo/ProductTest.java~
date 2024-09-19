@@ -96,14 +96,14 @@ public class ProductTest {
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = RuntimeException.class)
     public void testDeleteProduct() throws Exception {
         Product product = createProduct("Economics", 450);
         productRepository.insert(product);
         mockMvc.perform(delete("/products/" + product.getId()).headers(httpHeaders))
                 .andExpect(status().isNoContent());
         productRepository.findById(product.getId())
-                .orElseThrow(WrongMethodTypeException::new);
+                .orElseThrow(RuntimeException::new);
     }
 
     private Product createProduct(String name, int price) {

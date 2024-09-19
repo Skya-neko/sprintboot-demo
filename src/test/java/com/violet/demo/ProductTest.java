@@ -20,7 +20,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 
 import java.lang.invoke.WrongMethodTypeException;
+import java.util.Arrays;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -78,6 +80,28 @@ public class ProductTest {
                 .andExpect(jsonPath("$.id").value(product.getId()))
                 .andExpect(jsonPath("$.name").value(product.getName()))
                 .andExpect(jsonPath("$.price").value(product.getPrice()));
+    }
+
+    @Test
+    public void testSearchProductsSortByPriceAsc() throws Exception {
+        Product p1 = createProduct("Operation Management", 350);
+        Product p2 = createProduct("Marketing Management", 200);
+        Product p3 = createProduct("Human Resource Management", 420);
+        Product p4 = createProduct("Finance Management", 400);
+        Product p5 = createProduct("Enterprise Resource Planning", 440);
+        productRepository.insert(Arrays.asList(p1, p2, p3, p4, p5));
+
+        mockMvc.perform(get("/products")
+                        .headers(httpHeaders)
+                        .param("keyword", "Manage")
+                        .param("orderBy", "price")
+                        .param("sortRule", "asc"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(4)))
+                .andExpect(jsonPath("$[0].id").value(p2.getId()))
+                .andExpect(jsonPath("$[1].id").value(p1.getId()))
+                .andExpect(jsonPath("$[2].id").value(p4.getId()))
+                .andExpect(jsonPath("$[3].id").value(p3.getId()));
     }
 
     @Test
