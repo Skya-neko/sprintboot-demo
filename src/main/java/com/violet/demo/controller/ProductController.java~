@@ -48,6 +48,8 @@ public class ProductController {
     public ResponseEntity<List<Product>> getProducts(@ModelAttribute ProductQueryParameter param) {
         System.out.println("============= Start ProductController.getProducts =============");
         try {
+            String userName = environment.getProperty("USERNAME");
+            System.out.println(userName);
             List<Product> products = productService.getProducts(param);
             return ResponseEntity.ok(products);
         } catch (Exception e) {

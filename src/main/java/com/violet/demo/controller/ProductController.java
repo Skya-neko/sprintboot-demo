@@ -2,6 +2,7 @@ package com.violet.demo.controller;
 
 import com.violet.demo.entity.Product;
 import com.violet.demo.parameter.ProductQueryParameter;
+import jakarta.validation.Valid;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import com.violet.demo.service.ProductService;
@@ -61,7 +62,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product request) {
+    public ResponseEntity<Product> createProduct(@RequestBody @Valid Product request) {
         Product product = productService.createProduct(request);
 
         URI location = ServletUriComponentsBuilder
@@ -75,7 +76,7 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Product> replaceProduct(
-            @PathVariable("id") String id, @RequestBody Product request) {
+            @PathVariable("id") String id, @RequestBody @Valid Product request) {
         Product product = productService.replaceProduct(id, request);
         return ResponseEntity.ok(product);
     }

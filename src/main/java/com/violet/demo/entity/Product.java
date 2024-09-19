@@ -1,11 +1,15 @@
 package com.violet.demo.entity;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "products")
 public class Product {
     private String id;
+    @NotEmpty
     private String name;
+    @Min(0)
     private int price;
 
     public Product() {
