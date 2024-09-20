@@ -1,6 +1,8 @@
 package com.violet.demo.service;
 
+import com.violet.demo.converter.ProductConverter;
 import com.violet.demo.entity.Product;
+import com.violet.demo.entity.ProductRequest;
 import com.violet.demo.exception.NotFoundException;
 import com.violet.demo.parameter.ProductQueryParameter;
 import com.violet.demo.repository.ProductRepository;
@@ -23,11 +25,8 @@ public class ProductService {
                 .orElseThrow(() -> new NotFoundException("Can't find product."));
     }
 
-    public Product createProduct(Product request) {
-        Product product = new Product();
-        product.setName(request.getName());
-        product.setPrice(request.getPrice());
-
+    public Product createProduct(ProductRequest request) {
+        Product product = ProductConverter.toProduct(request);
         return repository.insert(product);
     }
 

@@ -1,6 +1,7 @@
 package com.violet.demo.controller;
 
 import com.violet.demo.entity.Product;
+import com.violet.demo.entity.ProductRequest;
 import com.violet.demo.parameter.ProductQueryParameter;
 import jakarta.validation.Valid;
 import org.springframework.core.env.Environment;
@@ -62,7 +63,7 @@ public class ProductController {
     }
 
     @PostMapping("/post")
-    public ResponseEntity<Product> createProduct(@Valid @RequestBody Product request) {
+    public ResponseEntity<Product> createProduct(@Valid @RequestBody ProductRequest request) {
         System.out.println("============= Start ProductController.createProduct =============");
         try {
             Product product = productService.createProduct(request);

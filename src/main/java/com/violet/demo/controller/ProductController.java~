@@ -61,7 +61,7 @@ public class ProductController {
         return ResponseEntity.notFound().build();
     }
 
-    @PostMapping
+    @PostMapping("/post")
     public ResponseEntity<Product> createProduct(@Valid @RequestBody Product request) {
         System.out.println("============= Start ProductController.createProduct =============");
         try {
