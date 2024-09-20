@@ -1,5 +1,7 @@
 package com.violet.demo;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.violet.demo.entity.Product;
 import com.violet.demo.repository.ProductRepository;
 import org.json.JSONArray;
@@ -124,6 +126,17 @@ public class ProductTest {
     }
 
     @Test
+    public void testGet400WhenCreateProduct() throws Exception {
+        Product product = createProduct("Economics", -1);
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String jsonProduct = ow.writeValueAsString(product);
+        System.out.println(jsonProduct);
+        MvcResult result = mockMvc.perform(post("/products/post").headers(httpHeaders).content(jsonProduct))
+                .andReturn();
+        Assert.assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+    }
+
+    @Test
     public void testReplaceProduct() throws Exception {
         Product product = createProduct("Economics", 450);
         productRepository.insert(product);
@@ -137,6 +150,22 @@ public class ProductTest {
                 .andExpect(jsonPath("$.price").value(request.getInt("price")));
 
 
+    }
+
+    @Test
+    public void testGet400WhenReplaceProduct() throws Exception {
+        Product product = createProduct("Economics", 450);
+        productRepository.save(product);
+
+        Product productNew = createProduct("", 450);
+
+        ObjectMapper mapper = new ObjectMapper();
+        String productStr = mapper.writeValueAsString(productNew);
+        System.out.println(productStr);
+
+        MvcResult result = mockMvc.perform(put("/products/" + product.getId()).headers(httpHeaders).content(productStr))
+                .andReturn();
+        Assert.assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
     }
 
     @Test(expected = RuntimeException.class)
