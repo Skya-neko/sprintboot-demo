@@ -22,7 +22,7 @@ public class MailController {
         msg.setSubject(request.getSubject());
         msg.setText(request.getContent());
         sender.send(msg);
-        
+
 
         return ResponseEntity.noContent().build();
     }

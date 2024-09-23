@@ -1,7 +1,10 @@
 package com.violet.demo;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,12 +15,21 @@ import java.util.Properties;
 
 @RestController
 public class MailController {
+    
+    @Autowired
+    private JavaMailSender sender;
+
+//    @Value("${spring.mail.username}")
+//    private String username;
+
+    @Value("${mail.display-name}")
+    private String displayName;
 
     @PostMapping("/mail")
     public ResponseEntity<Void> sendPlainText(@RequestBody SendMailRequest request) {
         JavaMailSenderImpl sender = createMailSender();
         SimpleMailMessage msg = new SimpleMailMessage();
-        msg.setFrom(String.format("%s<%s>", "Spring Mail", sender.getUsername()));
+        msg.setFrom(String.format("%s<%s>", displayName, sender.getUsername()));
         msg.setTo(request.getReceivers());
         msg.setSubject(request.getSubject());
         msg.setText(request.getContent());
