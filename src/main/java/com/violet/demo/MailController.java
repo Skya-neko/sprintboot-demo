@@ -15,21 +15,19 @@ import java.util.Properties;
 
 @RestController
 public class MailController {
-    
+
     @Autowired
     private JavaMailSender sender;
 
-//    @Value("${spring.mail.username}")
-//    private String username;
+    @Autowired
+    private MailConfig mailConfig;
 
-    @Value("${mail.display-name}")
-    private String displayName;
 
     @PostMapping("/mail")
     public ResponseEntity<Void> sendPlainText(@RequestBody SendMailRequest request) {
         JavaMailSenderImpl sender = createMailSender();
         SimpleMailMessage msg = new SimpleMailMessage();
-        msg.setFrom(String.format("%s<%s>", displayName, sender.getUsername()));
+        msg.setFrom(String.format("%s<%s>", mailConfig.getDisplayName(), sender.getUsername()));
         msg.setTo(request.getReceivers());
         msg.setSubject(request.getSubject());
         msg.setText(request.getContent());
