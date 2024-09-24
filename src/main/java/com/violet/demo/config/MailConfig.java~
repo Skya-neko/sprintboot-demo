@@ -8,14 +8,11 @@ public class MailConfig {
     @Value("${mail.display-name}")
     private String displayName;
 
-    @Value("${spring.mail.username}")
-    private String userName;
-
     public String getDisplayName() {
         return displayName;
     }
 
-    public String getUserName() {
-        return userName;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 }
