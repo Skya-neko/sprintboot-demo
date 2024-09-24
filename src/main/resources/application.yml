@@ -1,0 +1,16 @@
+server:
+  port: 8080
+spring:
+  profiles:
+    active: dev
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: violetviolet1022@gmail.com
+    password: jwab mcal vkxy tsnh
+    properties.mail.smtp.auth: true
+    properties.mail.smtp.starttls.enable: true
+    properties.mail.transport.protocol: smtp
+
+mail:
+  display-name:Spring Mail
