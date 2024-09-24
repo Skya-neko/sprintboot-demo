@@ -1,4 +1,4 @@
-package com.violet.demo;
+package com.violet.demo.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;

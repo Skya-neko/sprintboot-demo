@@ -1,4 +1,4 @@
-package com.violet.demo;
+package com.violet.demo.entity;
 
 public class SendMailRequest {
     private String[] receivers = new String[0];
