@@ -14,11 +14,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@Service
 public class ProductService {
 
-    @Autowired
     private ProductRepository repository;
+
+    public ProductService(ProductRepository repository) {
+        this.repository = repository;
+    }
 
     public Product getProduct(String id) {
         return repository.findById(id)
