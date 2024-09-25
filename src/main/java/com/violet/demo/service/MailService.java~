@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Service
 public class MailService {
 
-    //    @Qualifier("GmailSender")
+//    @Qualifier("GmailSender")
     public JavaMailSenderImpl gmailSender;
     @Autowired
     public MailConfig mailConfig;
