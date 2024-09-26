@@ -1,6 +1,5 @@
 spring.application.name=demo
 spring.data.mongodb.uri=mongodb://localhost:27017/demo
-
 server.port=8080
 spring.mail.gmail.host=smtp.gmail.com
 spring.mail.gmail.port=587

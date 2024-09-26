@@ -21,7 +21,7 @@ import java.util.Properties;
 public class MailController {
 
     @Autowired
-    @Qualifier("googleMailService")
+    @Qualifier("mailService")
     private MailService mailService;
 
 

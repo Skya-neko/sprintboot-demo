@@ -13,6 +13,9 @@ import java.util.Properties;
 @Configuration
 @PropertySource("classpath:application.properties")
 public class MailConfig {
+    @Value("${mail.platform}")
+    private String platform;
+
     @Value("${mail.display-name}")
     private String displayName;
 
@@ -48,8 +51,19 @@ public class MailConfig {
         return userName;
     }
 
+    @Bean("mailService")
+    public MailService mailServiceByPlatform() {
+        switch (platform) {
+            case "gmail":
+                return googleMailService();
+            case "yahoo":
+                return yahooMailService();
+            default:
+                return null;
+        }
+    }
 
-    @Bean("googleMailService")
+
     public MailService googleMailService() {
         JavaMailSenderImpl sender = new JavaMailSenderImpl();
         sender.setHost(gmailHost);
@@ -65,7 +79,6 @@ public class MailConfig {
         return new MailService(sender);
     }
 
-    @Bean("yahooMailService")
     public MailService yahooMailService() {
         JavaMailSenderImpl sender = new JavaMailSenderImpl();
         return new MailService(sender);

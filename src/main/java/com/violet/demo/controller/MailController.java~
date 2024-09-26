@@ -20,8 +20,8 @@ import java.util.Properties;
 @RestController
 public class MailController {
 
-    
-    @Qualifier("googleMailService")
+    @Autowired
+    @Qualifier("mailServiceByPlatform")
     private MailService mailService;
 
 
