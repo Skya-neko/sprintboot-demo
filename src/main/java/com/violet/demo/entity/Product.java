@@ -7,9 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "products")
 public class Product {
     private String id;
-    @NotEmpty(message = "Product name is undefined.")
     private String name;
-    @Min(value = 0, message = "Price should be greater than or equal to 0.")
     private int price;
 
     public Product() {

@@ -35,13 +35,13 @@ public class MailConfig {
     private String gmailPassword;
 
     @Value("${spring.mail.gmail.properties.mail.smtp.auth}")
-    private Boolean gmailSmtpAuth;
+    private Boolean authEnabled;
 
     @Value("${spring.mail.gmail.properties.mail.smtp.starttls.enable}")
-    private Boolean gmailSmtpTlsEnable;
+    private Boolean starttlsEnabled;
 
     @Value("${spring.mail.gmail.properties.mail.transport.protocol}")
-    private String gmailTransProtocol;
+    private String protocol;
 
     public String getDisplayName() {
         return displayName;
@@ -51,36 +51,34 @@ public class MailConfig {
         return userName;
     }
 
-    @Bean("mailService")
-    public MailService mailServiceByPlatform() {
-        switch (platform) {
-            case "gmail":
-                return googleMailService();
-            case "yahoo":
-                return yahooMailService();
-            default:
-                return null;
-        }
+    @Bean
+    public MailService mailService() {
+        JavaMailSenderImpl mailSender = "gmail".equals(platform)
+                ? gmailSender()
+                : yahooSender();
+
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.smtp.auth", authEnabled);
+        props.put("mail.smtp.starttls.enable", starttlsEnabled);
+        props.put("mail.transport.protocol", protocol);
+
+        System.out.println("Mail Service is created.");
+        return new MailService(mailSender);
     }
 
+    private JavaMailSenderImpl gmailSender() {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost(gmailHost);
+        mailSender.setPort(gmailPort);
+        mailSender.setUsername(gmailUsername);
+        mailSender.setPassword(gmailPassword);
 
-    public MailService googleMailService() {
-        JavaMailSenderImpl sender = new JavaMailSenderImpl();
-        sender.setHost(gmailHost);
-        sender.setPort(gmailPort);
-        sender.setUsername(gmailUsername);
-        sender.setPassword(gmailPassword);
-
-        Properties props = sender.getJavaMailProperties();
-        props.put("mail.smtp.auth", gmailSmtpAuth); //是否向郵件服務驗證身份
-        props.put("mail.smtp.starttls.enable", gmailSmtpTlsEnable); //是否啟用 TLS(傳輸層安全)，對通訊加密
-        props.put("mail.transport.protocol", gmailTransProtocol); //傳輸協定
-
-        return new MailService(sender);
+        return mailSender;
     }
 
-    public MailService yahooMailService() {
-        JavaMailSenderImpl sender = new JavaMailSenderImpl();
-        return new MailService(sender);
+    private JavaMailSenderImpl yahooSender() {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+
+        return mailSender;
     }
 }

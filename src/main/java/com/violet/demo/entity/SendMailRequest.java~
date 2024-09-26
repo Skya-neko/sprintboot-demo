@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SendMailRequest {
-    private List<String> receivers = new ArrayList<>();
+    private  List<String> receivers = new ArrayList<>();
     private String subject = "";
     private String content = "";
 
