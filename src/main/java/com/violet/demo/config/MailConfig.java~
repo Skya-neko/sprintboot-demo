@@ -54,7 +54,7 @@ public class MailConfig {
     }
 
     @Bean
-    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     public MailService mailService() {
         JavaMailSenderImpl mailSender = "gmail".equals(platform)
                 ? gmailSender()
