@@ -11,16 +11,14 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@Service
 public class MailService {
 
-    //    @Qualifier("GmailSender")
-    public JavaMailSenderImpl gmailSender;
+    public JavaMailSenderImpl mailSender;
     @Autowired
     public MailConfig mailConfig;
 
-    public MailService(JavaMailSenderImpl gmailSender) {
-        this.gmailSender = gmailSender;
+    public MailService(JavaMailSenderImpl mailSender) {
+        this.mailSender = mailSender;
     }
 
     public ResponseEntity<Void> sendPlainText(@RequestBody SendMailRequest request) {
@@ -29,7 +27,7 @@ public class MailService {
         msg.setTo(request.getReceivers());
         msg.setSubject(request.getSubject());
         msg.setText(request.getContent());
-        gmailSender.send(msg);
+        mailSender.send(msg);
 
 
         return ResponseEntity.noContent().build();

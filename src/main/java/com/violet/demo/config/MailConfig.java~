@@ -49,8 +49,8 @@ public class MailConfig {
     }
 
 
-    @Bean("GmailSender")
-    public MailService mailService() {
+    @Bean
+    public MailService googleMailService() {
         JavaMailSenderImpl sender = new JavaMailSenderImpl();
         sender.setHost(gmailHost);
         sender.setPort(gmailPort);
@@ -62,6 +62,12 @@ public class MailConfig {
         props.put("mail.smtp.starttls.enable", gmailSmtpTlsEnable); //是否啟用 TLS(傳輸層安全)，對通訊加密
         props.put("mail.transport.protocol", gmailTransProtocol); //傳輸協定
 
+        return new MailService(sender);
+    }
+
+    @Bean("yahooMailService")
+    public MailService yahooMailService() {
+        JavaMailSenderImpl sender = new JavaMailSenderImpl();
         return new MailService(sender);
     }
 }

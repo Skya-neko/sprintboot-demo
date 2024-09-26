@@ -4,6 +4,8 @@ import com.violet.demo.config.MailConfig;
 import com.violet.demo.entity.SendMailRequest;
 import com.violet.demo.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -18,9 +20,9 @@ import java.util.Properties;
 @RestController
 public class MailController {
 
-    @Autowired
+    
+    @Qualifier("googleMailService")
     private MailService mailService;
-
 
 
     @PostMapping("/mail")
