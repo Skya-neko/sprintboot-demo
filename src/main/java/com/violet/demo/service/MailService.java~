@@ -65,8 +65,6 @@ public class MailService {
         String content = String.format("There's a new created product (%s).", productId);
         sendMail("New Product", content,
                 Collections.singletonList(LOG_EMAIL));
-        apiCallTimes++;
-        System.out.println("這是第" + apiCallTimes + "次呼叫 Mail API 送出的信");
     }
 
     public void sendDeleteProductMail(String productId) {
